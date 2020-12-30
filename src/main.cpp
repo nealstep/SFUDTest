@@ -3,13 +3,13 @@
 
 const sfud_flash* flash;
 static const uint32_t addr=0x0;
-static const size_t data_size = 128;
+static const size_t data_size = 192;
 uint8_t data1[data_size];
 uint8_t data2[data_size];
 
 void data_init(void) {
   for (size_t i=0;i<data_size;i++) {
-    data1[i] = i;
+    data1[i] = (uint8_t)i;
     data2[i] = 0;
   }
 }
@@ -29,7 +29,6 @@ void data_dump(uint8_t data[]) {
       Serial.print("\n  ");
     }
   }
-
   Serial.println("");
 }
 
@@ -47,9 +46,6 @@ void data_compare(void) {
       Serial.print(") ");
     }
   }
-  if (i == data_size) {
-    Serial.println("None");
-  }
   Serial.println("");
 }  
 
@@ -62,7 +58,7 @@ void flash_read(void) {
 }
 
 void flash_write(void) {
-  if (sfud_write(flash, addr, data_size, data1) != SFUD_SUCCESS) {
+  if (sfud_erase_write(flash, addr, data_size, data1) != SFUD_SUCCESS) {
     Serial.println("*** Flash write failed ***");
   } else {
     Serial.println("Write succeeded");
@@ -78,9 +74,7 @@ void setup(void) {
   Serial.println("Starting");
   while (!(sfud_init() == SFUD_SUCCESS))
     ;
-#ifdef SFUD_USING_QSPI
   sfud_qspi_fast_read_enable(sfud_get_device(SFUD_W25Q32_DEVICE_INDEX), 2);
-#endif
   flash = sfud_get_device_table();
   Serial.println("Started");
 
