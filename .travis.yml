@@ -1,0 +1,20 @@
+language: python
+python:
+    - "3.7"
+
+# Cache PlatformIO packages using Travis CI container-based infrastructure
+sudo: false
+cache:
+    directories:
+        - "~/.platformio"
+        - $HOME/.cache/pip
+
+env:
+    - PLATFORMIO_CI_SRC=src/main.cpp
+
+install:
+    - pip install -U platformio
+    - pio update
+
+script:
+    - pio ci -c platformio.ini --lib='.' --board=seeed_wio_terminal
